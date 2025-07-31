@@ -29,6 +29,7 @@ class PitchResponse(BaseModel):
     title: str
     description: str
     transcript: str
+    analysis_result: Optional[str] = None  # JSON string of analysis results
     created_at: datetime
     user_id: int
     

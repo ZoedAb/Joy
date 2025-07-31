@@ -87,6 +87,7 @@
   margin-top: 1rem;
   display: flex;
   gap: 0.5rem;
+  flex-wrap: wrap;
 }
 
 .play-btn {
@@ -112,6 +113,23 @@
 .play-btn.playing {
   background-color: #28a745;
   animation: pulse 1.5s infinite;
+}
+
+.analysis-btn {
+  background-color: #4285f4;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: background-color 0.2s;
+}
+
+.analysis-btn:hover {
+  background-color: #3367d6;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(66, 133, 244, 0.3);
 }
 
 @keyframes pulse {

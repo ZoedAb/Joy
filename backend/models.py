@@ -23,6 +23,7 @@ class Pitch(Base):
     description = Column(Text)
     audio_file_path = Column(String)
     transcript = Column(Text)
+    analysis_result = Column(Text)  # JSON string of ML analysis results
     created_at = Column(DateTime, default=datetime.utcnow)
     user_id = Column(Integer, ForeignKey("users.id"))
     

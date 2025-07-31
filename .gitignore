@@ -1,5 +1,3 @@
-GEMINI_SETUP.md
-PHASE_1_COMPLETE.md
 test_application.py
-WHISPER_GUIDE.md
-WHISPER_SUCCESS.md
+test_realtime.py
+docs/** /*

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import axios from 'axios';
+import AnalysisView from './AnalysisView';
 import './PitchList.css';
 
 interface Pitch {
@@ -8,6 +9,7 @@ interface Pitch {
   title: string;
   description: string;
   transcript: string;
+  analysis_result?: string;
   created_at: string;
   user_id: number;
 }
@@ -21,6 +23,7 @@ const PitchList: React.FC<PitchListProps> = ({ pitches, setPitches }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [playingAudio, setPlayingAudio] = useState<number | null>(null);
+  const [showAnalysis, setShowAnalysis] = useState<number | null>(null);
   const { token } = useAuth();
 
   useEffect(() => {
@@ -127,10 +130,27 @@ const PitchList: React.FC<PitchListProps> = ({ pitches, setPitches }) => {
                 >
                   {playingAudio === pitch.id ? '🔊 Playing...' : '🎵 Play Audio'}
                 </button>
+                
+                {pitch.analysis_result && (
+                  <button 
+                    className="analysis-btn"
+                    onClick={() => setShowAnalysis(pitch.id)}
+                    title="View AI analysis and investor feedback"
+                  >
+                    📊 View Analysis
+                  </button>
+                )}
               </div>
             </div>
           ))}
         </div>
+      )}
+      
+      {showAnalysis && (
+        <AnalysisView 
+          pitchId={showAnalysis} 
+          onClose={() => setShowAnalysis(null)} 
+        />
       )}
     </div>
   );
