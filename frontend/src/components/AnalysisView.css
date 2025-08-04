@@ -92,6 +92,27 @@
   padding: 24px;
 }
 
+.content-type-header {
+  margin-bottom: 24px;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 8px;
+  color: white;
+}
+
+.content-type-header h3 {
+  margin: 0 0 8px 0;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.content-type-header p {
+  margin: 0;
+  opacity: 0.9;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
 .loading {
   text-align: center;
   padding: 40px;

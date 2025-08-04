@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import axios from 'axios';
 import AnalysisView from './AnalysisView';
+import ComprehensiveReport from './ComprehensiveReport/ComprehensiveReport';
 import './PitchList.css';
 
 interface Pitch {
@@ -24,6 +25,7 @@ const PitchList: React.FC<PitchListProps> = ({ pitches, setPitches }) => {
   const [error, setError] = useState('');
   const [playingAudio, setPlayingAudio] = useState<number | null>(null);
   const [showAnalysis, setShowAnalysis] = useState<number | null>(null);
+  const [showComprehensiveReport, setShowComprehensiveReport] = useState<number | null>(null);
   const { token } = useAuth();
 
   useEffect(() => {
@@ -140,6 +142,14 @@ const PitchList: React.FC<PitchListProps> = ({ pitches, setPitches }) => {
                     📊 View Analysis
                   </button>
                 )}
+                
+                <button 
+                  className="comprehensive-report-btn"
+                  onClick={() => setShowComprehensiveReport(pitch.id)}
+                  title="Generate comprehensive report with advanced analytics"
+                >
+                  📈 Comprehensive Report
+                </button>
               </div>
             </div>
           ))}
@@ -150,6 +160,13 @@ const PitchList: React.FC<PitchListProps> = ({ pitches, setPitches }) => {
         <AnalysisView 
           pitchId={showAnalysis} 
           onClose={() => setShowAnalysis(null)} 
+        />
+      )}
+      
+      {showComprehensiveReport && (
+        <ComprehensiveReport 
+          pitchId={showComprehensiveReport} 
+          onClose={() => setShowComprehensiveReport(null)} 
         />
       )}
     </div>

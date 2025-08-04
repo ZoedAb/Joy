@@ -310,67 +310,108 @@ class InvestorAI:
         
         concerns = []
         
-        # Check confidence issues
-        confidence_analysis = analysis.get('confidence_analysis', {})
-        if confidence_analysis and not confidence_analysis.get('error'):
-            confidence_score = confidence_analysis.get('confidence_score', 50)
-            if confidence_score < 60:
-                concerns.append("Lack of confidence in delivery")
+        try:
+            # Check confidence issues
+            confidence_analysis = analysis.get('confidence_analysis', {})
+            if confidence_analysis and not confidence_analysis.get('error'):
+                confidence_score = confidence_analysis.get('confidence_score', 50)
+                if confidence_score < 60:
+                    concerns.append("Lack of confidence in delivery")
+            
+            # Check for too many hedge words
+            if confidence_analysis:
+                indicators = confidence_analysis.get('confidence_indicators', {})
+                hedge_words = indicators.get('hedge_words', 0)
+                if hedge_words > 3:
+                    concerns.append("Too much uncertain language")
+            
+            # Check sentiment issues
+            sentiment_analysis = analysis.get('sentiment_analysis', {})
+            if sentiment_analysis and not sentiment_analysis.get('error'):
+                compound = sentiment_analysis.get('sentiment_scores', {}).get('compound', 0)
+                if compound < 0:
+                    concerns.append("Negative tone throughout pitch")
+            
+            # Check readability
+            readability = analysis.get('readability_analysis', {})
+            if readability and not readability.get('error'):
+                flesch_score = readability.get('flesch_reading_ease', 50)
+                if flesch_score < 30:
+                    concerns.append("Message too complex to understand")
+            
+            # Check video analysis if available
+            video_analysis = analysis.get('video_analysis', {})
+            if video_analysis:
+                business_appropriateness = video_analysis.get('business_appropriateness', 0.5)
+                if business_appropriateness < 0.6:
+                    concerns.append("Presentation style may not be appropriate for business context")
+                
+                emotion_stability = video_analysis.get('emotion_stability', 0.5)
+                if emotion_stability < 0.5:
+                    concerns.append("Inconsistent emotional delivery throughout presentation")
+            
+        except Exception as e:
+            logger.error(f"Error identifying concerns: {e}")
+            concerns = ["Unable to analyze specific concerns due to data format"]
         
-        # Check for too many hedge words
-        if confidence_analysis:
-            indicators = confidence_analysis.get('confidence_indicators', {})
-            hedge_words = indicators.get('hedge_words', 0)
-            if hedge_words > 3:
-                concerns.append("Too much uncertain language")
-        
-        # Check sentiment issues
-        sentiment_analysis = analysis.get('sentiment_analysis', {})
-        if sentiment_analysis and not sentiment_analysis.get('error'):
-            compound = sentiment_analysis.get('sentiment_scores', {}).get('compound', 0)
-            if compound < 0:
-                concerns.append("Negative tone throughout pitch")
-        
-        # Check readability
-        readability = analysis.get('readability_analysis', {})
-        if readability and not readability.get('error'):
-            flesch_score = readability.get('flesch_reading_ease', 50)
-            if flesch_score < 30:
-                concerns.append("Message too complex to understand")
-        
-        return concerns[:3]  # Limit to top 3 concerns
+        # Ensure concerns is a list and limit to top 3
+        if isinstance(concerns, list):
+            return concerns[:3]
+        else:
+            return ["Analysis data format issue"]
     
     def _suggest_improvements(self, analysis: Dict[str, Any]) -> List[str]:
         """Suggest specific improvements based on analysis"""
         
         improvements = []
         
-        # Get ML recommendations if available
-        ml_recommendations = analysis.get('recommendations', [])
-        if ml_recommendations:
-            # Translate technical recommendations to investor language
-            for rec in ml_recommendations[:3]:
-                if "filler words" in rec.lower():
-                    improvements.append("Practice pausing instead of using filler words")
-                elif "confidence" in rec.lower():
-                    improvements.append("Use more assertive language to build credibility")
-                elif "powerful" in rec.lower():
-                    improvements.append("Include more compelling business terminology")
-                elif "pace" in rec.lower():
-                    improvements.append("Adjust speaking pace for better audience engagement")
+        try:
+            # Get ML recommendations if available
+            ml_recommendations = analysis.get('recommendations', [])
+            if isinstance(ml_recommendations, list) and ml_recommendations:
+                # Translate technical recommendations to investor language
+                for rec in ml_recommendations[:3]:
+                    if isinstance(rec, str):
+                        if "filler words" in rec.lower():
+                            improvements.append("Practice pausing instead of using filler words")
+                        elif "confidence" in rec.lower():
+                            improvements.append("Use more assertive language to build credibility")
+                        elif "powerful" in rec.lower():
+                            improvements.append("Include more compelling business terminology")
+                        elif "pace" in rec.lower():
+                            improvements.append("Adjust speaking pace for better audience engagement")
+            
+            # Add investor-specific suggestions
+            confidence_score = analysis.get('confidence_score', 50)
+            if confidence_score < 70:
+                improvements.append("Practice your pitch to build confidence and reduce hesitation")
+            
+            emotion_analysis = analysis.get('emotion_analysis', {})
+            if emotion_analysis and not emotion_analysis.get('error'):
+                emotion_scores = emotion_analysis.get('emotion_scores', {})
+                if emotion_scores.get('joy', 0) < 0.2:
+                    improvements.append("Show more enthusiasm for your solution and market")
+            
+            # Add video-specific improvements
+            video_analysis = analysis.get('video_analysis', {})
+            if video_analysis:
+                business_appropriateness = video_analysis.get('business_appropriateness', 0.5)
+                if business_appropriateness < 0.7:
+                    improvements.append("Practice maintaining professional demeanor throughout presentation")
+                
+                emotion_stability = video_analysis.get('emotion_stability', 0.5)
+                if emotion_stability < 0.6:
+                    improvements.append("Work on consistent emotional expression and engagement")
+            
+        except Exception as e:
+            logger.error(f"Error suggesting improvements: {e}")
+            improvements = ["Focus on clear communication and confident delivery"]
         
-        # Add investor-specific suggestions
-        confidence_score = analysis.get('confidence_score', 50)
-        if confidence_score < 70:
-            improvements.append("Practice your pitch to build confidence and reduce hesitation")
-        
-        emotion_analysis = analysis.get('emotion_analysis', {})
-        if emotion_analysis and not emotion_analysis.get('error'):
-            emotion_scores = emotion_analysis.get('emotion_scores', {})
-            if emotion_scores.get('joy', 0) < 0.2:
-                improvements.append("Show more enthusiasm for your solution and market")
-        
-        return improvements[:4]  # Limit to 4 suggestions
+        # Ensure improvements is a list and limit to 4
+        if isinstance(improvements, list):
+            return improvements[:4]
+        else:
+            return ["Practice your presentation skills"]
 
 # Create global investor AI instance
 investor_ai = InvestorAI()

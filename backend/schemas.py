@@ -29,6 +29,8 @@ class PitchResponse(BaseModel):
     title: str
     description: str
     transcript: str
+    audio_file_path: Optional[str] = None
+    video_file_path: Optional[str] = None  # Phase 4: Video file path
     analysis_result: Optional[str] = None  # JSON string of analysis results
     created_at: datetime
     user_id: int

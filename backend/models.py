@@ -22,6 +22,7 @@ class Pitch(Base):
     title = Column(String, index=True)
     description = Column(Text)
     audio_file_path = Column(String)
+    video_file_path = Column(String)  # Phase 4: Video file path
     transcript = Column(Text)
     analysis_result = Column(Text)  # JSON string of ML analysis results
     created_at = Column(DateTime, default=datetime.utcnow)

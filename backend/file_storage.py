@@ -32,6 +32,49 @@ class FileStorage:
         else:
             raise ValueError(f"Unsupported storage type: {self.storage_type}")
     
+    async def save_video_file(self, video_content: bytes, filename: str) -> str:
+        """
+        Save video file and return the file path
+        """
+        # Generate unique filename
+        file_extension = filename.split('.')[-1] if '.' in filename else 'mp4'
+        unique_filename = f"{uuid.uuid4()}.{file_extension}"
+        file_path = self.base_path / unique_filename
+        
+        if self.storage_type == "local":
+            return await self._save_local(video_content, file_path)
+        elif self.storage_type == "cloud":
+            return await self._save_cloud(video_content, unique_filename)
+        else:
+            raise ValueError(f"Unsupported storage type: {self.storage_type}")
+    
+    async def save_file(self, content: bytes, filename: str, file_type: str = "auto") -> str:
+        """
+        Generic file save method that auto-detects type or uses specified type
+        """
+        if file_type == "auto":
+            # Auto-detect based on file extension
+            if filename and '.' in filename:
+                ext = filename.split('.')[-1].lower()
+                if ext in ['mp3', 'wav', 'flac', 'aac', 'm4a']:
+                    return await self.save_audio_file(content, filename)
+                elif ext in ['mp4', 'avi', 'mov', 'webm', 'mkv']:
+                    return await self.save_video_file(content, filename)
+        elif file_type == "audio":
+            return await self.save_audio_file(content, filename)
+        elif file_type == "video":
+            return await self.save_video_file(content, filename)
+        
+        # Default fallback - save as generic file
+        file_extension = filename.split('.')[-1] if '.' in filename else 'bin'
+        unique_filename = f"{uuid.uuid4()}.{file_extension}"
+        file_path = self.base_path / unique_filename
+        
+        if self.storage_type == "local":
+            return await self._save_local(content, file_path)
+        else:
+            return await self._save_cloud(content, unique_filename)
+    
     async def _save_local(self, audio_content: bytes, file_path: Path) -> str:
         """Save file locally"""
         async with aiofiles.open(file_path, 'wb') as f:
